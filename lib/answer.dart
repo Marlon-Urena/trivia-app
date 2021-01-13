@@ -7,15 +7,14 @@ class Answer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ButtonTheme(
-        height: 60,
-        minWidth: 200,
-        child: RaisedButton(
-            onPressed: () {},
-            child: Text(answerText,
-                style: TextStyle(
-                    fontSize: 28,
-                    color: Colors.white,
-                    backgroundColor: Colors.blue))));
+    return ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          minimumSize: Size.fromHeight(50),
+          textStyle: TextStyle(
+            fontSize: 26,
+          ),
+        ),
+        onPressed: () {},
+        child: Text(answerText));
   }
 }

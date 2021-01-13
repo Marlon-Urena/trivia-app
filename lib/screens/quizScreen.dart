@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:trivia_app/answer.dart';
 import 'package:html_unescape/html_unescape.dart';
 import 'package:trivia_app/question.dart';
@@ -15,27 +14,49 @@ class QuizScreen extends StatefulWidget {
 }
 
 class _QuizScreenState extends State<QuizScreen> {
-  int questionNum = 0;
+  int _questionNum = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Column(
+          children: [
+            Text('Entertainment',
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(
+              'Video Games',
+              style: TextStyle(fontSize: 16),
+            ),
+          ],
+        ),
+        centerTitle: true,
+      ),
       body: FutureBuilder<QuizResponse>(
           future: Service.fetchQuizQuestion(),
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
+          builder:
+              (BuildContext context, AsyncSnapshot<QuizResponse> snapshot) {
             List<Widget> children;
             if (snapshot.hasData) {
-              List<String> answers = snapshot.data.toJson()['results']
-                  [this.questionNum]['incorrect_answers'];
-              answers.add(snapshot.data.toJson()['results'][this.questionNum]
-                  ['correct_answer']);
+              Results result = snapshot.data.results[this._questionNum];
+              List<String> answers = result.incorrectAnswers;
+              answers.add(result.correctAnswer);
               answers.shuffle();
               children = <Widget>[
-                Question(HtmlUnescape()
-                    .convert(snapshot.data.results[this.questionNum].question)),
-                ...List.generate(answers.length, (index) {
-                  return Answer(answers[index]);
-                }),
+                Padding(
+                  padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+                  child: Column(
+                    children: [
+                      Question(HtmlUnescape().convert(result.question)),
+                      ...List.generate(answers.length, (index) {
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                          child: Answer(HtmlUnescape().convert(answers[index])),
+                        );
+                      }),
+                    ],
+                  ),
+                )
               ];
             } else if (snapshot.hasError) {
               children = <Widget>[
@@ -55,10 +76,13 @@ class _QuizScreenState extends State<QuizScreen> {
               ];
             }
             return Center(
-                child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: children,
+                child: Padding(
+              padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: children,
+              ),
             ));
           }),
     );

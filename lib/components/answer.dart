@@ -18,7 +18,7 @@ class Answer extends StatelessWidget {
 
   void _handlePressed() {
     if (handleSelectedAnswer != null)
-      this.handleSelectedAnswer(isCorrectAnswer, answerText, answerId);
+      this.handleSelectedAnswer(isCorrectAnswer, answerId);
   }
 
   @override

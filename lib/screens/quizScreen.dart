@@ -57,8 +57,7 @@ class _QuizScreenState extends State<QuizScreen> {
     });
   }
 
-  // TODO: Remove unused answerText
-  bool handleSelectAnswer(bool isCorrectAnswer, String answerText, int choice) {
+  bool handleSelectAnswer(bool isCorrectAnswer, int choice) {
     bool hasSelected = true;
 
     setState(() {

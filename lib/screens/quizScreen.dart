@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:html_unescape/html_unescape.dart';
 import 'package:trivia_app/components/answer.dart';
 import 'package:trivia_app/components/question.dart';
+import 'package:trivia_app/screens/homeScreen.dart';
 import 'package:trivia_app/screens/resultsScreen.dart';
 import 'package:trivia_app/services/service.dart';
 
@@ -116,10 +117,12 @@ class _QuizScreenState extends State<QuizScreen> {
               children: [
                 TextButton(
                   child: Text('EXIT'),
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => HomeScreen()));
+                  },
                 ),
-                Text((_questionNum + 1).toString() +
-                    '/' +
-                    _numQuestions.toString())
+                Text('${_questionNum + 1}/$_numQuestions')
               ],
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
             ),

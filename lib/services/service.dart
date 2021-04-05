@@ -1,3 +1,4 @@
+import 'package:html_unescape/html_unescape.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
@@ -36,24 +37,23 @@ class Results {
   String correctAnswer;
   List<String> incorrectAnswers;
 
-  Results(
-      {this.category,
-      this.type,
-      this.difficulty,
-      this.question,
-      this.correctAnswer,
-      this.incorrectAnswers});
+  Results({this.category,
+    this.type,
+    this.difficulty,
+    this.question,
+    this.correctAnswer,
+    this.incorrectAnswers});
 
   //TODO: Unescape answers
   Results.fromJson(Map<String, dynamic> json) {
-    List<String> unProcessedIncorrectAnswers = [];
     category = json['category'];
     type = json['type'];
     difficulty = json['difficulty'];
-    question = json['question'];
-    correctAnswer = json['correct_answer'];
-    incorrectAnswers = json['incorrect_answers'].cast<String>();
-    //incorrectAnswers = unProcessedIncorrectAnswers.map((e) => HtmlUnescape().convert(e)).toList();
+    question = HtmlUnescape().convert(json['question']);
+    correctAnswer = HtmlUnescape().convert(json['correct_answer']);
+    incorrectAnswers = json['incorrect_answers']
+        .map<String>((e) => HtmlUnescape().convert(e))
+        .toList();
   }
 
   Map<String, dynamic> toJson() {

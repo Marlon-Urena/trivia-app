@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:html_unescape/html_unescape.dart';
 import 'package:trivia_app/components/answer.dart';
 import 'package:trivia_app/components/question.dart';
 import 'package:trivia_app/screens/homeScreen.dart';
@@ -24,7 +23,6 @@ class _QuizScreenState extends State<QuizScreen> {
   Map<int, bool> _answerMap = Map();
   List<Results> _quizResults;
   int _numCorrect = 0;
-  int _numQuestions = 0;
 
   @override
   void initState() {
@@ -35,7 +33,6 @@ class _QuizScreenState extends State<QuizScreen> {
       setState(() {
         _quizResults = results;
         _isLoading = false;
-        _numQuestions = results.length;
       });
     });
   }
@@ -122,7 +119,7 @@ class _QuizScreenState extends State<QuizScreen> {
                         MaterialPageRoute(builder: (context) => HomeScreen()));
                   },
                 ),
-                Text('${_questionNum + 1}/$_numQuestions')
+                Text('${_questionNum + 1}/${_quizResults.length}')
               ],
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
             ),
@@ -133,7 +130,7 @@ class _QuizScreenState extends State<QuizScreen> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 margin: EdgeInsets.only(top: 16.0, bottom: 16.0),
-                child: Question(HtmlUnescape().convert(result.question))),
+                child: Question(result.question)),
             ...List.generate(_answers.length, (index) {
               return Padding(
                 padding: EdgeInsets.only(top: 8.0, bottom: 8.0),

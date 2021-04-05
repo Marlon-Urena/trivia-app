@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:trivia_app/answer.dart';
 import 'package:html_unescape/html_unescape.dart';
-import 'package:trivia_app/question.dart';
+import 'package:trivia_app/components/answer.dart';
+import 'package:trivia_app/components/question.dart';
 import 'package:trivia_app/screens/resultsScreen.dart';
 import 'package:trivia_app/services/service.dart';
 
@@ -27,7 +27,6 @@ class _QuizScreenState extends State<QuizScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     Service.fetchQuizQuestion().then((value) {
       List<Results> results = value.results;

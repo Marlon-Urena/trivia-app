@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'quizScreen.dart';
+import 'package:trivia_app/screens/quizScreen.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -10,7 +9,7 @@ class HomeScreen extends StatelessWidget {
             child: ButtonTheme(
                 height: 60,
                 minWidth: 200,
-                child: RaisedButton(
+                child: ElevatedButton(
                   child: Text('Start Quiz',
                       style: TextStyle(
                           fontSize: 20,

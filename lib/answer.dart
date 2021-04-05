@@ -1,20 +1,37 @@
 import 'package:flutter/material.dart';
 
 class Answer extends StatelessWidget {
-  final String answerText;
+  Answer(
+      {this.answerText,
+      this.isCorrectAnswer,
+      this.handleSelectedAnswer,
+      this.answerId,
+      this.questionAnswered,
+      this.color: Colors.blue});
 
-  Answer(this.answerText);
+  final String answerText;
+  final bool isCorrectAnswer;
+  final Function handleSelectedAnswer;
+  final int answerId;
+  final bool questionAnswered;
+  final Color color;
+
+  void _handlePressed() {
+    if (handleSelectedAnswer != null)
+      this.handleSelectedAnswer(isCorrectAnswer, answerText, answerId);
+  }
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
         style: ElevatedButton.styleFrom(
+          primary: color,
           minimumSize: Size.fromHeight(50),
           textStyle: TextStyle(
             fontSize: 26,
           ),
         ),
-        onPressed: () {},
-        child: Text(answerText));
+        onPressed: _handlePressed,
+        child: Text(this.answerText));
   }
 }

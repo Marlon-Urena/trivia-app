@@ -11,7 +11,7 @@ class QuizResponse {
   QuizResponse.fromJson(Map<String, dynamic> json) {
     responseCode = json['response_code'];
     if (json['results'] != null) {
-      results = new List<Results>();
+      results = <Results>[];
       json['results'].forEach((v) {
         results.add(new Results.fromJson(v));
       });
@@ -44,13 +44,16 @@ class Results {
       this.correctAnswer,
       this.incorrectAnswers});
 
+  //TODO: Unescape answers
   Results.fromJson(Map<String, dynamic> json) {
+    List<String> unProcessedIncorrectAnswers = [];
     category = json['category'];
     type = json['type'];
     difficulty = json['difficulty'];
     question = json['question'];
     correctAnswer = json['correct_answer'];
     incorrectAnswers = json['incorrect_answers'].cast<String>();
+    //incorrectAnswers = unProcessedIncorrectAnswers.map((e) => HtmlUnescape().convert(e)).toList();
   }
 
   Map<String, dynamic> toJson() {
@@ -68,7 +71,6 @@ class Results {
 class Service {
   static Future<QuizResponse> fetchQuizQuestion() async {
     final response = await http.get('https://opentdb.com/api.php?amount=10');
-
     if (response.statusCode == 200) {
       return QuizResponse.fromJson(json.decode(response.body));
     } else {

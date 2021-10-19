@@ -2,23 +2,22 @@ import 'package:flutter/material.dart';
 
 class Answer extends StatelessWidget {
   Answer(
-      {this.answerText,
-      this.isCorrectAnswer,
-      this.handleSelectedAnswer,
-      this.answerId,
-      this.questionAnswered,
+      {required this.answerText,
+      required this.isCorrectAnswer,
+      required this.handleSelectedAnswer,
+      required this.answerId,
+      required this.isAnswerChosen,
       this.color: Colors.blue});
 
   final String answerText;
+  final bool isAnswerChosen;
   final bool isCorrectAnswer;
   final Function handleSelectedAnswer;
   final int answerId;
-  final bool questionAnswered;
   final Color color;
 
   void _handlePressed() {
-    if (handleSelectedAnswer != null)
-      this.handleSelectedAnswer(isCorrectAnswer, answerId);
+    if (!isAnswerChosen) this.handleSelectedAnswer(isCorrectAnswer, answerId);
   }
 
   @override

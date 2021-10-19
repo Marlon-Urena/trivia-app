@@ -6,9 +6,18 @@ import 'package:trivia_app/screens/resultsScreen.dart';
 import 'package:trivia_app/services/service.dart';
 
 class QuizScreen extends StatefulWidget {
-  final String text;
+  QuizScreen(
+      {Key? key,
+      required this.category,
+      required this.questionType,
+      required this.amount,
+      required this.difficulty})
+      : super(key: key);
 
-  const QuizScreen({Key key, this.text}) : super(key: key);
+  final String category;
+  final String questionType;
+  final int amount;
+  final String difficulty;
 
   @override
   _QuizScreenState createState() => _QuizScreenState();
@@ -17,17 +26,23 @@ class QuizScreen extends StatefulWidget {
 class _QuizScreenState extends State<QuizScreen> {
   int _questionNum = 0;
   int _selectedAnswer = -1;
+  int _correctAnswer = -1;
   bool _isLoading = true;
   bool _hasSelected = false;
+
+  //Contains the possible answers for question
   List<String> _answers = [];
-  Map<int, bool> _answerMap = Map();
-  List<Results> _quizResults;
+
+  //Contains array of questions and their possible answers
+  late List<Results> _quizResults;
   int _numCorrect = 0;
 
   @override
   void initState() {
     super.initState();
-    Service.fetchQuizQuestion().then((value) {
+    Service.fetchQuizQuestion(widget.difficulty, widget.category,
+            widget.questionType, widget.amount)
+        .then((value) {
       List<Results> results = value.results;
       this.loadQuizAnswers(results[_questionNum]);
       setState(() {
@@ -38,43 +53,47 @@ class _QuizScreenState extends State<QuizScreen> {
   }
 
   void loadQuizAnswers(Results result) {
-    List<String> answers = result.incorrectAnswers;
-    answers.add(result.correctAnswer);
-    answers.shuffle();
-    Map<int, bool> answerMap = Map();
-    for (int i = 0; i < answers.length; i++) {
-      if (answers[i] == result.correctAnswer) {
-        answerMap[i] = true;
-      } else {
-        answerMap[i] = false;
-      }
+    List<String> answers;
+    if (result.type == "boolean") {
+      answers = ["True", "False"];
+    } else {
+      answers = result.incorrectAnswers;
+      answers.add(result.correctAnswer);
+      answers.shuffle();
     }
+    int correctAnswer = answers.indexOf(result.correctAnswer);
     setState(() {
-      _answerMap = answerMap;
       _answers = answers;
+      _correctAnswer = correctAnswer;
     });
   }
 
-  bool handleSelectAnswer(bool isCorrectAnswer, int choice) {
-    bool hasSelected = true;
-
+  void handleSelectAnswer(bool isCorrectAnswer, int choice) {
     setState(() {
-      _hasSelected = hasSelected;
+      _hasSelected = true;
       _selectedAnswer = choice;
       _numCorrect = isCorrectAnswer ? _numCorrect + 1 : _numCorrect;
     });
-    return isCorrectAnswer;
   }
 
-  Color createColorSelection(int index) {
-    if (_selectedAnswer == index) {
-      if (_answerMap[index]) {
-        return Colors.green;
-      }
-      return Colors.red;
-    } else if (_hasSelected && _answerMap[index]) {
+  Color createColorSelection(int answer) {
+    /*
+    If answer has been chosen and the answer is correct return green
+    regardless if right or wrong
+     */
+    if (_hasSelected && answer == _correctAnswer) {
       return Colors.green;
     }
+    /*
+     If answer has been chosen and is not the correct answer
+     then highlight that answer as red
+     */
+    else if (_hasSelected &&
+        _selectedAnswer == answer &&
+        answer != _correctAnswer) {
+      return Colors.red;
+    }
+    // If no answer has been chosen then answer will be blue
     return Colors.blue;
   }
 
@@ -84,6 +103,10 @@ class _QuizScreenState extends State<QuizScreen> {
           context,
           MaterialPageRoute(
               builder: (context) => ResultsScreen(
+                  questionType: widget.questionType,
+                  category: widget.category,
+                  amount: widget.amount,
+                  difficulty: widget.difficulty,
                   numAnsweredCorrect: _numCorrect,
                   numQuestions: _quizResults.length)));
     } else {
@@ -136,9 +159,9 @@ class _QuizScreenState extends State<QuizScreen> {
                 padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
                 child: Answer(
                   answerText: _answers[index],
-                  isCorrectAnswer: _answerMap[index],
-                  handleSelectedAnswer:
-                      _hasSelected ? null : this.handleSelectAnswer,
+                  isCorrectAnswer: _correctAnswer == index,
+                  handleSelectedAnswer: this.handleSelectAnswer,
+                  isAnswerChosen: _hasSelected,
                   answerId: index,
                   color: createColorSelection(index),
                 ),
